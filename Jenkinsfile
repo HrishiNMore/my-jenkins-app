@@ -20,16 +20,16 @@ pipeline {
         }
 
       stage('Run') {
-        steps {
-          sh '''#!/bin/bash
-            pkill -f "node server.js" || true
-            sleep 1
-            BUILD_ID=dontKillMe nohup npm start > app.log 2>&1 &
-            sleep 2
-            cat app.log
-           '''
-           }
+       steps {
+        sh '''
+          pm2 delete my-app || true
+          pm2 start server.js --name my-app
+          pm2 save
+          sleep 2
+          pm2 logs my-app --lines 20 --nostream
+        '''
        }
+     }
     }
 
     post {
