@@ -19,16 +19,18 @@ pipeline {
             }
         }
 
-        stage('Run') {
-            steps {
-                sh '''
-                  pkill -f "node server.js" || true
-                  nohup npm start > app.log 2>&1 &
-                  sleep 2
-                  cat app.log
-                '''
-            }
-        }
+       stage('Run') {
+    steps {
+        sh '''
+          pkill -f "node server.js" || true
+          sleep 1
+          BUILD_ID=dontKillMe nohup npm start > app.log 2>&1 &
+          disown
+          sleep 2
+          cat app.log
+        '''
+    }
+}
     }
 
     post {
